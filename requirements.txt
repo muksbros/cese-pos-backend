@@ -6,3 +6,4 @@ bcrypt
 pyjwt
 pydantic[email]
 email-validator
+dnspython
