@@ -208,6 +208,19 @@ async def delete_product(product_id: str, current_user: dict = Depends(get_curre
     if res.deleted_count == 0: raise HTTPException(status_code=404, detail="Product not found")
     return {"ok": True}
 
+# --- NEW: Bulk Delete Endpoints ---
+@api_router.delete("/products")
+async def delete_all_products(current_user: dict = Depends(get_current_user)):
+    """Wipes all products for the current merchant's store."""
+    await db.products.delete_many({"tenant_id": current_user["tenant_id"]})
+    return {"ok": True}
+
+@api_router.delete("/transactions")
+async def delete_all_transactions(current_user: dict = Depends(get_current_user)):
+    """Wipes all transactions for the current merchant's store."""
+    await db.transactions.delete_many({"tenant_id": current_user["tenant_id"]})
+    return {"ok": True}
+
 @api_router.post("/transactions", response_model=Transaction)
 async def create_transaction(payload: TransactionIn, current_user: dict = Depends(get_current_user)):
     now = datetime.now(timezone.utc)
